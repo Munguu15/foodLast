@@ -10,7 +10,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use("/category", categoryRouter);
+app.use("/categories", categoryRouter);
 app.use("/user", userRouter);
 app.use("/food", foodRouter);
 app.use("/order", orderRouter);

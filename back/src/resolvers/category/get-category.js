@@ -2,23 +2,24 @@ import { categoryModel } from "../../models/category-models.js";
 import { foodModel } from "../../models/food-models.js";
 
 export const getCategoryResolver = async (req, res) => {
-  const catergory = await categoryModel.find();
+  const categories = await categoryModel.find();
 
   const result = await Promise.all(
     categories.map(async (category) => {
-      const foodcount = await foodModel.countDocuments({
-        category: category.id,
+      const foodCount = await foodModel.countDocuments({
+        category: category._id,
       });
       return {
         ...category.toObject(),
-        foodCount,
+        foodCount: foodCount,
       };
     }),
   );
 
-  const allFoodcount = await foodModel.countDocuments();
+  const allFoodCount = await foodModel.countDocuments();
   res.status(200).json({
     categories: result,
-    allFoodcount,
+    allFoodCount,
+    allFoodcount: allFoodCount,
   });
 };

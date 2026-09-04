@@ -128,3 +128,16 @@
     @apply font-sans;
   }
 }
+
+@keyframes footer-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.footer-marquee-track {
+  animation: footer-marquee 0ms linear infinite;
+}

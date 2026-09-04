@@ -1,20 +1,36 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
-const ObjectiD = Schema.ObjectId;
+const ObjectId = Schema.ObjectId;
 
-const FoodScehema = new Schema({
-  id: ObjectiD,
+const FoodSchema = new Schema({
+  id: ObjectId,
   foodName: String,
+  price: Number,
   foodPrice: Number,
-  foodDescription: String,
+  image: String,
   foodImage: String,
+  foodDescription: String,
   category: {
-    type: ObjectiD,
+    type: ObjectId,
     ref: "Category",
   },
-  ingredients: [String],
-
-  createAt: { type: Date, requiered: true, default: Date.now },
+  ingredients: Schema.Types.Mixed,
+  createAt: { type: Date, required: true, default: Date.now },
   updatedAt: { type: Date, required: true, default: Date.now },
 });
-export const foodModel = mongoose.model("food", FoodScehema);
+
+export const foodModel = mongoose.model("food", FoodSchema);
+
+export const serializeFood = (food) => {
+  const doc = food.toObject ? food.toObject() : food;
+  const ingredients = Array.isArray(doc.ingredients)
+    ? doc.ingredients.join(", ")
+    : doc.ingredients || "";
+
+  return {
+    ...doc,
+    price: doc.price ?? doc.foodPrice ?? 0,
+    image: doc.image || doc.foodImage || "",
+    ingredients,
+  };
+};

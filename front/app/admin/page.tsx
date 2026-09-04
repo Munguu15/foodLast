@@ -1,84 +1,67 @@
 "use client";
-import { Main } from "next/document";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-type CategoryType = {
-  categoryName: String;
-  _id: String;
-};
 
-export default function Home() {
-  const [categories, setCategories] = useState<CategoryType[]>([]);
-  const [categoryName, setCategory] = useState("");
-  type CategoryType = {
-    categoryName: string;
-    _id: String;
-  };
+import { useState } from "react";
+import { LayoutGrid, ShoppingBag } from "lucide-react";
+import { FoodMenu } from "./foodMenu";
+import { AdminOrders } from "./orders";
 
-  const getCategory = async () => {
-    const res = await fetch("http://localhost:3000/category");
-    const data = await res.json();
-    setCategories(data);
-    console.log("category", data);
-  };
+export default function AdminPage() {
+  const [tab, setTab] = useState<"menu" | "orders">("menu");
 
-  const createCategory = async () => {
-    const res = await fetch("http://localhost:3000/category", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        categoryName: "gg",
-      }),
-    });
-  };
-  useEffect(() => {
-    getCategory();
-  }, []);
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10">
-      <h1 className="text-2xl font-semibold tracking-tight">Categories</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        Get, create, and update food categories
-      </p>
-      <div className="flex flex-wrap gap-2 items-center">
-        {categories.map((category, index) => (
-          <button
-            key={index}
-            className="border border-gray-200 text-[14px] text-black rounded-full flex items-center gap-2 font-medium "
-          >
-            {category.categoryName}
-            <div className="text-white bg-black rounded-full w-9 h-5 ">20</div>
-          </button>
-        ))}
-        <button
-          onClick={() => createCategory()}
-          className="flex items-center justify-center h-8 w-8 bg-red-500 text-white text-2xl rounded-full"
-        >
-          +
-        </button>
-        <Dialog>
-          <DialogTrigger>Open</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Are you absolutely sure?</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </main>
+    <div className="flex min-h-screen bg-gray-100 font-sans">
+      <aside className="w-64 bg-white p-6 flex flex-col justify-between border-r">
+        <div>
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center overflow-hidden">
+              <img src="/images/NomnomLogo.png" alt="logo" />
+            </div>
+            <div>
+              <h1 className="font-bold text-gray-800 leading-none">NomNom</h1>
+              <span className="text-[10px] text-gray-400">Swift delivery</span>
+            </div>
+          </div>
+
+          <nav className="space-y-2">
+            <button
+              type="button"
+              onClick={() => setTab("menu")}
+              className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-full text-sm font-medium ${
+                tab === "menu"
+                  ? "bg-black text-white"
+                  : "text-gray-500 hover:bg-gray-100"
+              }`}
+            >
+              <LayoutGrid size={18} />
+              Food menu
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("orders")}
+              className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-full text-sm font-medium ${
+                tab === "orders"
+                  ? "bg-black text-white"
+                  : "text-gray-500 hover:bg-gray-100"
+              }`}
+            >
+              <ShoppingBag size={18} />
+              Orders
+            </button>
+          </nav>
+        </div>
+      </aside>
+
+      <main className="flex-1 p-8 overflow-y-auto">
+        <div className="flex justify-end mb-4">
+          <div className="w-9 h-9 rounded-full bg-purple-500 overflow-hidden border-2 border-white shadow-sm">
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+              alt="avatar"
+            />
+          </div>
+        </div>
+        {tab === "menu" ? <FoodMenu /> : <AdminOrders />}
+      </main>
+    </div>
   );
-}
+};
