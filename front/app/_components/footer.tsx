@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-
 const marqueeItems = Array.from({ length: 8 }, () => "Fresh fast delivered");
 
 const companyLinks = [
@@ -56,22 +55,19 @@ const NomNomLogo = () => (
   </svg>
 );
 
-
 export const Footer = () => {
   return (
     <footer className="mt-auto w-full bg-[#18181B] text-white">
       <div className="overflow-hidden bg-[#EF4444] py-6">
-        <div className="footer-marquee-track flex w-max ">
+        <div className="flex items-center justify-center">
           {
-            <div  className="flex items-center gap-8 pr-8">
-              {marqueeItems.map((text) => (
-                
+            <div className="flex items-center justify-center gap-8 pr-8">
+              {marqueeItems.map((text, index) => (
                 <span
-                 
-                  className="flex items-center gap-8 text-[11px] font-extrabold tracking-tight whitespace-nowrap"
+                  key={`${text}-${index}`}
+                  className="flex items-center justify-center gap-8 text-[11px] font-extrabold tracking-tight whitespace-nowrap"
                 >
                   {text}
-                 
                 </span>
               ))}
             </div>
@@ -140,7 +136,11 @@ export const Footer = () => {
                 aria-label="Facebook"
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-white/80"
               >
-              <img src="/images/face.png" alt="Facebook" className="h-4 w-4" />  
+                <img
+                  src="/images/face.png"
+                  alt="Facebook"
+                  className="h-4 w-4"
+                />
               </a>
               <a
                 href="https://instagram.com"
@@ -149,7 +149,11 @@ export const Footer = () => {
                 aria-label="Instagram"
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-white/80"
               >
-               <img src="/images/insta.png" alt="Instagram" className="h-4 w-4" />
+                <img
+                  src="/images/insta.png"
+                  alt="Instagram"
+                  className="h-4 w-4"
+                />
               </a>
             </div>
           </div>

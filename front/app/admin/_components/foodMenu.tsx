@@ -9,7 +9,7 @@ export type CategoryType = {
   foodCount: number;
 };
 
-const API = "http://localhost:8000";
+import { apiFetch } from "@/lib/api";
 
 export const FoodMenu = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
@@ -19,7 +19,7 @@ export const FoodMenu = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const getCategory = async () => {
-    const res = await fetch(`${API}/categories`);
+    const res = await apiFetch(`/categories`);
     const data = await res.json();
     setCategories(data.categories || []);
     setTotalFoods(data.allFoodCount || 0);
@@ -27,9 +27,8 @@ export const FoodMenu = () => {
 
   const createCategory = async () => {
     if (!categoryName.trim()) return;
-    await fetch(`${API}/categories`, {
+    await apiFetch(`/categories`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ categoryName: categoryName.trim() }),
     });
     setCategoryName("");

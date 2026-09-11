@@ -4,6 +4,7 @@ import { Hero } from "./_components/hero";
 import { FoodList } from "./_components/foodList";
 import { Footer } from "./_components/footer";
 import { useEffect, useState } from "react";
+import { apiFetch } from "@/lib/api";
 export type CategoryType = {
   _id: string;
   categoryName: string;
@@ -14,7 +15,7 @@ export default function Home() {
   const [categories, setCategories] = useState<CategoryType[]>([]);
 
   const getCategories = async () => {
-    const response = await fetch(`http://localhost:8000/categories`);
+    const response = await apiFetch("/categories");
     const data = await response.json();
     setCategories(data.categories || []);
   };
@@ -24,10 +25,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-[#404040] text-white">
-      <div className="mx-auto flex w-full max-w-[1669px] flex-col px-4">
-        <Header />
-      </div>
+    <div className="flex min-h-screen w-full flex-col bg-[#404040] text-white pt-16">
+      <Header />
       <div className="w-full flex-1">
         <Hero />
         <main

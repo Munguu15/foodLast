@@ -13,30 +13,34 @@ export type CartItem = FoodType & { quantity: number };
 
 type CartContextType = {
   items: CartItem[];
-  addItem: (food: FoodType) => void;
+  addItem: (food: FoodType, quantity?: number) => void;
   removeItem: (id: string) => void;
   changeQty: (id: string, quantity: number) => void;
   clear: () => void;
   totalCount: number;
   totalPrice: number;
+  cartOpen: boolean;
+  setCartOpen: (open: boolean) => void;
 };
 
 const CartContext = createContext<CartContextType | null>(null);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
 
-  const addItem = (food: FoodType) => {
+  const addItem = (food: FoodType, quantity = 1) => {
+    const amount = Math.max(1, quantity);
     setItems((prev) => {
       const existing = prev.find((item) => item._id === food._id);
       if (existing) {
         return prev.map((item) =>
           item._id === food._id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + amount }
             : item,
         );
       }
-      return [...prev, { ...food, quantity: 1 }];
+      return [...prev, { ...food, quantity: amount }];
     });
   };
 
@@ -71,8 +75,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       clear,
       totalCount,
       totalPrice,
+      cartOpen,
+      setCartOpen,
     }),
-    [items, totalCount, totalPrice],
+    [items, totalCount, totalPrice, cartOpen],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

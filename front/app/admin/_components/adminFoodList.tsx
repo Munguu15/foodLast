@@ -11,10 +11,8 @@ import { Button } from "@/components/ui/button";
 import { ImagePlus, Plus } from "lucide-react";
 import { AdminFoodCard } from "./adminFoodCard";
 import { CategoryType } from "./foodMenu";
-
-const UPLOAD_PRESET = "ml_default";
-const CLOUD_NAME = "tmnqu3q8";
-const API = "http://localhost:8000";
+import { apiFetch } from "@/lib/api";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 const inputClass =
   "h-10 w-full rounded-lg border border-neutral-200 bg-white px-3 text-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/10";
@@ -35,7 +33,7 @@ export const AdminFoodList = ({
   const [open, setOpen] = useState(false);
 
   const getFoods = async () => {
-    const response = await fetch(`${API}/food/${food._id}`);
+    const response = await apiFetch(`/food/${food._id}`);
     const data = await response.json();
     setFoods(data || []);
   };
@@ -49,9 +47,8 @@ export const AdminFoodList = ({
 
   const createFood = async () => {
     if (!foodName.trim() || !foodPrice) return;
-    await fetch(`${API}/food`, {
+    await apiFetch(`/food`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         foodName: foodName.trim(),
         image: imgUrl,
@@ -67,23 +64,6 @@ export const AdminFoodList = ({
     getFoods();
   };
 
-  const uploadToCloudinary = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
-
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-        { method: "POST", body: formData },
-      );
-      const data = await response.json();
-      return data.secure_url;
-    } catch (error) {
-      console.error("Cloudinary upload failed:", error);
-    }
-  };
-
   const handleImgUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -92,11 +72,12 @@ export const AdminFoodList = ({
     setUploading(true);
     try {
       const url = await uploadToCloudinary(file);
-      if (url) setImgUrl(url);
+      setImgUrl(url);
     } catch (err) {
-      console.log("Failed to upload logo: " + err);
+      console.error("Cloudinary upload failed:", err);
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   useEffect(() => {

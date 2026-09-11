@@ -2,12 +2,13 @@
 import { useEffect, useState } from "react";
 import { FoodCard, FoodType } from "./foodCard";
 import { CategoryType } from "../page";
+import { apiFetch } from "@/lib/api";
 
 export const FoodList = ({ category }: { category: CategoryType }) => {
   const [foods, setFoods] = useState<FoodType[]>([]);
 
   const getFoods = async () => {
-    const response = await fetch(`http://localhost:8000/food/${category._id}`);
+    const response = await apiFetch(`/food/${category._id}`);
     const data = await response.json();
 
     setFoods(Array.isArray(data) ? data : []);

@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
+
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const FoodSchema = new Schema({
-  id: ObjectId,
-  foodName: String,
+  foodName: { type: String, required: true },
   price: Number,
   foodPrice: Number,
   image: String,

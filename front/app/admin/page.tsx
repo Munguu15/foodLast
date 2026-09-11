@@ -1,26 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LayoutGrid, ShoppingBag } from "lucide-react";
-import { FoodMenu } from "./foodMenu";
-import { AdminOrders } from "./orders";
+import { useRouter } from "next/navigation";
+import { getStoredUser } from "@/lib/api";
+import { FoodMenu } from "./_components/foodMenu";
+import { AdminOrders } from "./_components/orders";
+import Link from "next/link";
 
 export default function AdminPage() {
+  const router = useRouter();
   const [tab, setTab] = useState<"menu" | "orders">("menu");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const user = getStoredUser();
+    if (!user || user.role !== "ADMIN") {
+      router.replace("/login");
+      return;
+    }
+    setReady(true);
+  }, [router]);
+
+  if (!ready) return null;
 
   return (
     <div className="flex min-h-screen bg-gray-100 font-sans">
       <aside className="w-64 bg-white p-6 flex flex-col justify-between border-r">
         <div>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center overflow-hidden">
-              <img src="/images/NomnomLogo.png" alt="logo" />
+          <Link href="/" className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-8 relative rounded-full flex items-center justify-center overflow-hidden">
+              <img
+                src="/images/NomnomLogo.png"
+                alt="logo"
+                className=" object-contain absolute "
+              />
             </div>
             <div>
               <h1 className="font-bold text-gray-800 leading-none">NomNom</h1>
               <span className="text-[10px] text-gray-400">Swift delivery</span>
             </div>
-          </div>
+          </Link>
 
           <nav className="space-y-2">
             <button
@@ -64,4 +84,4 @@ export default function AdminPage() {
       </main>
     </div>
   );
-};
+}

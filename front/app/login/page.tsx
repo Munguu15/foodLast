@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const API = "http://localhost:8000";
+import { apiFetch } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,9 +15,8 @@ export default function LoginPage() {
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    const res = await fetch(`${API}/user/login`, {
+    const res = await apiFetch(`/user/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();

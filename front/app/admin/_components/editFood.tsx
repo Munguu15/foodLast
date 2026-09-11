@@ -4,10 +4,8 @@ import { FoodType } from "./adminFoodCard";
 import { useEffect, useState } from "react";
 import { CategoryType } from "./foodMenu";
 import { Pencil, Trash2 } from "lucide-react";
-
-const UPLOAD_PRESET = "ml_default";
-const CLOUD_NAME = "tmnqu3q8";
-const API = "http://localhost:8000";
+import { apiFetch } from "@/lib/api";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export const EditFood = ({
   food,
@@ -28,15 +26,14 @@ export const EditFood = ({
   const [uploading, setUploading] = useState(false);
 
   const getCategory = async () => {
-    const res = await fetch(`${API}/categories`);
+    const res = await apiFetch(`/categories`);
     const data = await res.json();
     setCategories(data.categories || []);
   };
 
   const editFood = async () => {
-    await fetch(`${API}/food`, {
+    await apiFetch(`/food`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: food._id,
         foodName: editingFood,
@@ -51,30 +48,12 @@ export const EditFood = ({
   };
 
   const deleteFood = async () => {
-    await fetch(`${API}/food`, {
+    await apiFetch(`/food`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: food._id }),
     });
     setOpen(false);
     onChanged();
-  };
-
-  const uploadToCloudinary = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
-
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-        { method: "POST", body: formData },
-      );
-      const data = await response.json();
-      return data.secure_url;
-    } catch (error) {
-      console.error("Cloudinary upload failed:", error);
-    }
   };
 
   const handleImgUpload = async (
@@ -85,9 +64,9 @@ export const EditFood = ({
     setUploading(true);
     try {
       const url = await uploadToCloudinary(file);
-      if (url) setImgUrl(url);
+      setImgUrl(url);
     } catch (err) {
-      console.log("Failed to upload logo: " + err);
+      console.error("Cloudinary upload failed:", err);
     } finally {
       setUploading(false);
     }

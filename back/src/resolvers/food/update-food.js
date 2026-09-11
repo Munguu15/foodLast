@@ -1,6 +1,11 @@
 import { foodModel, serializeFood } from "../../models/food-models.js";
+import { asyncHandler } from "../../middleware/error.js";
 
-export const updateFood = async (req, res) => {
+export const updateFood = asyncHandler(async (req, res) => {
+  if (!req.body.id) {
+    return res.status(400).json({ message: "Food id is required" });
+  }
+
   const price = Number(req.body.price ?? req.body.foodPrice);
   const image = req.body.image ?? req.body.foodImage;
   const ingredients = req.body.ingredients ?? req.body.foodDescription;
@@ -21,5 +26,9 @@ export const updateFood = async (req, res) => {
     { new: true },
   );
 
-  res.status(200).json(updated ? serializeFood(updated) : updated);
-};
+  if (!updated) {
+    return res.status(404).json({ message: "Food not found" });
+  }
+
+  res.status(200).json(serializeFood(updated));
+});

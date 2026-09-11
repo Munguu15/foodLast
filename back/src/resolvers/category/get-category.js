@@ -1,7 +1,8 @@
 import { categoryModel } from "../../models/category-models.js";
 import { foodModel } from "../../models/food-models.js";
+import { asyncHandler } from "../../middleware/error.js";
 
-export const getCategoryResolver = async (req, res) => {
+export const getCategoryResolver = asyncHandler(async (_req, res) => {
   const categories = await categoryModel.find();
 
   const result = await Promise.all(
@@ -11,7 +12,7 @@ export const getCategoryResolver = async (req, res) => {
       });
       return {
         ...category.toObject(),
-        foodCount: foodCount,
+        foodCount,
       };
     }),
   );
@@ -22,4 +23,4 @@ export const getCategoryResolver = async (req, res) => {
     allFoodCount,
     allFoodcount: allFoodCount,
   });
-};
+});

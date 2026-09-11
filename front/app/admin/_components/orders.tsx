@@ -12,25 +12,25 @@ type OrderType = {
   totalPrice: number;
   status: "PENDING" | "COMPLETED" | "CANCELLED";
   createAt?: string;
+  address?: string;
   foodOrderItems?: OrderItem[];
   user?: { name?: string; email?: string };
 };
 
-const API = "http://localhost:8000";
+import { apiFetch } from "@/lib/api";
 
 export const AdminOrders = () => {
   const [orders, setOrders] = useState<OrderType[]>([]);
 
   const getOrders = async () => {
-    const res = await fetch(`${API}/order`);
+    const res = await apiFetch(`/order`);
     const data = await res.json();
     setOrders(Array.isArray(data) ? data : []);
   };
 
   const updateStatus = async (id: string, status: OrderType["status"]) => {
-    await fetch(`${API}/order`, {
+    await apiFetch(`/order`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, status }),
     });
     getOrders();
@@ -53,6 +53,7 @@ export const AdminOrders = () => {
                 <th className="py-2 pr-3">#</th>
                 <th className="py-2 pr-3">Items</th>
                 <th className="py-2 pr-3">Total</th>
+                <th className="py-2 pr-3">Address</th>
                 <th className="py-2 pr-3">Date</th>
                 <th className="py-2">Status</th>
               </tr>
@@ -70,6 +71,7 @@ export const AdminOrders = () => {
                       .join(", ") || "—"}
                   </td>
                   <td className="py-3 pr-3 font-medium">${order.totalPrice}</td>
+                  <td className="py-3 pr-3 text-gray-500">{order.address || "—"}</td>
                   <td className="py-3 pr-3 text-gray-500">
                     {order.createAt
                       ? new Date(order.createAt).toLocaleString()
